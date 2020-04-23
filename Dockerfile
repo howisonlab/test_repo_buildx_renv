@@ -2,14 +2,19 @@
 
 FROM rocker/r-base
 
-ENV RENV_VERSION 0.9.3-80
-RUN --mount=type=cache,target=/buildx_caches/renv_cache R -e "install.packages('remotes', repos = c(CRAN = 'https://cloud.r-project.org'))"
-RUN --mount=type=cache,target=/buildx_caches/renv_cache R -e "remotes::install_github('rstudio/renv@${RENV_VERSION}')"
+#ENV RENV_VERSION 0.9.3-80
+#RUN --mount=type=cache,target=/buildx_caches/renv_cache R -e "install.packages('remotes', repos = c(CRAN = 'https://cloud.r-project.org'))"
+#RUN --mount=type=cache,target=/buildx_caches/renv_cache R -e "remotes::install_github('rstudio/renv@${RENV_VERSION}')"
 
-# COPY install.R .
+#COPY renv_install.R .
 
-# RUN --mount=type=cache,target=/buildx_caches/renv_cache R -e install.R 
+COPY hello_world_project /app
 
-RUN --mount=type=cache,target=/buildx_caches/renv_cache R -e "Sys.setenv(RENV_PATHS_ROOT = '/buildx_caches/renv_cache'); renv::consent(TRUE); renv:::renv_paths_cache(); renv::init(); renv::status(); renv::shapshot()"
- 
-# RUN --mount=type=cache,target=/buildx_caches/renv_cache tar xvf - -C /cache
+RUN --mount=type=cache,target=/buildx_caches/renv_cache Rscript /app/renv_install.R
+
+# copy renv cache from buildx cache mount point
+# because buildx cache mount point only available
+# this is the sort of thing pip does at the end of building
+
+RUN mkdir -p /root/.local/share/renv
+RUN --mount=type=cache,target=/buildx_caches/renv_cache cp -a /buildx_caches/renv_cache/* /root/.local/share/renv
