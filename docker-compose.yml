@@ -1,0 +1,18 @@
+version: '3'
+services:
+  renv_via_volume:
+    image: renv_via_volume:latest
+    build: .
+    # ports:
+    #  - "8789:8787"
+    volumes:
+      - 'renv_volume_data:/renv_volume_cache'
+
+    #  - .:/home/rstudio/softcite-dataset
+    #  - ../softcite-pdf-files/:/home/rstudio/softcite-pdf-files
+    # environment:
+    #  - PASSWORD=rbox
+
+volumes:
+  renv_volume_data:
+    driver: local
