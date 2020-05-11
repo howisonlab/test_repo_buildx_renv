@@ -26,7 +26,7 @@ As I understand it, docker buildkit (aka buildx) has the concept of a "builder" 
 RUN --mount=type=cache,target=/path/to/cache/mount 
 ```
 
-These are special volume-like docker objects (called `exec.cachemount`) which are attached to the docker builder when a RUN command with the ``--mount=type,cache`` flag is provided.
+These are special volume-like docker objects (called `exec.cachemount`) which are attached to the docker builder when a RUN command with the ``--mount=type=cache`` flag is provided. (btw, is it not a bit weird to have two = signs in that argument? I checked it a few times, definitely looks right).
 
 [This buildx issue](https://github.com/docker/buildx/issues/156) helped me to understand that cache is overloaded with two meanings in buildx land: the instruction cache and the mount cache.  The instruction cache is the docker caching of unchanged lines in Docker files (also used with multi-stage builds, buildx provides some additional capabilities I don't understand here).  The mount cache creates some sort of disk space (is it a docker volume? I dunno) which persists across build runs.  I don't entirely understand, but my working mental model is that there is a docker container with a docker volume in which building occurs.
 
